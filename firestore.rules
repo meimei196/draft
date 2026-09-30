@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Hardened Global Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn();
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- UserData Validation ---
+    function isValidUserData(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             (data.personas is list && data.personas.size() <= 20) &&
+             (data.activePersonaId is string && data.activePersonaId.size() <= 128) &&
+             (data.chats is map && data.chats.size() <= 100) &&
+             (data.activeSessionIds is map && data.activeSessionIds.size() <= 50) &&
+             (data.likedBots is list && data.likedBots.size() <= 200) &&
+             (data.apiKey is string && data.apiKey.size() <= 256) &&
+             (data.model is string && data.model.size() <= 64) &&
+             (data.temperature is number && data.temperature >= 0 && data.temperature <= 2) &&
+             (data.customApiUrl is string && data.customApiUrl.size() <= 512) &&
+             (data.provider is string && data.provider.size() <= 32) &&
+             (data.affectionLevels is map && data.affectionLevels.size() <= 200) &&
+             (data.isOnboarded is bool) &&
+             (data.updatedAt is number);
+    }
+
+    // --- BotStats Validation ---
+    function isValidBotStats(data) {
+      return (!('chatCount' in data) || (data.chatCount is int && data.chatCount >= 0)) &&
+             (!('likesCount' in data) || (data.likesCount is int && data.likesCount >= 0));
+    }
+
+    // --- Collection Routes ---
+
+    match /users/{userId} {
+      allow get: if isVerified() && userId == request.auth.uid;
+      // No blanket list of users allowed
+      allow list: if false;
+
+      allow create: if isVerified() && userId == request.auth.uid &&
+                      isValidUserData(incoming()) &&
+                      incoming().userId == request.auth.uid;
+
+      allow update: if isVerified() && userId == request.auth.uid &&
+                      isValidUserData(incoming()) &&
+                      incoming().userId == userId; // Immutable userId
+
+      allow delete: if false; // Users cannot delete profiles via client
+    }
+
+    match /bot_stats/{botId} {
+      allow read: if true;
+      allow create, update: if isValidBotStats(incoming());
+      allow delete: if false;
+    }
+
+    match /user_profiles/{userId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if true;
+    }
+
+    match /feedbacks/{feedbackId} {
+      allow read: if true;
+      allow create: if incoming().content is string && incoming().content.size() <= 10000;
+      allow update: if false;
+      allow delete: if true;
+    }
+
+    match /bot_comments/{commentId} {
+      allow read: if true;
+      allow create, update: if incoming().botId is string;
+      allow delete: if true;
+    }
+
+    match /forum_posts/{postId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if true;
+    }
+
+    match /forum_comments/{commentId} {
+      allow read: if true;
+      allow create, update: if incoming().postId is string;
+      allow delete: if true;
+    }
+
+    match /user_accounts/{username} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if false;
+    }
+
+    match /garden_records/{username} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if false;
+    }
+  }
+}

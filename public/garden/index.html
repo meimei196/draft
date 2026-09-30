@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17221d">
+  <title>Mộng Miên · thử đường đi trên ảnh gốc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="stage-viewport" id="stageViewport">
+    <div class="stage-extension stage-extension-top" id="stageExtensionTop" aria-hidden="true">
+      <div class="sky-layer sky-layer-night"></div>
+      <div class="sky-layer sky-layer-day"></div>
+      <div class="celestial-body sky-moon" id="skyMoon"></div>
+      <div class="celestial-body sky-sun" id="skySun"></div>
+    </div>
+    <main class="stage" id="stage" aria-label="Bản thử đường đi an toàn trong vườn Mộng Miên">
+    <!-- Tiêu đề Vườn ở khoảng trống phía trên cảnh vườn -->
+    <div class="garden-scene-title" id="gardenSceneTitle" aria-label="Tên khu vườn">
+      <span class="scene-title-sparkle left" aria-hidden="true">✧</span>
+      <span class="scene-title-text" id="gardenSceneTitleText">Vườn Mộng Miên</span>
+      <span class="scene-title-sparkle right" aria-hidden="true">✧</span>
+    </div>
+    <img class="garden" src="assets/original-dark-romance-garden.webp" alt="Ảnh vườn dark romance gốc được chọn">
+    <div class="moon-cover" id="moonCover" aria-hidden="true"></div>
+    <div class="day-sky" aria-hidden="true"></div>
+    <img class="lake-loop" src="assets/lake-loop.webp" alt="" aria-hidden="true">
+    <canvas class="lake-canvas" id="lakeCanvas" width="454" height="520" aria-hidden="true"></canvas>
+    <img id="lakeMask" src="assets/lake-water-mask.png" hidden alt="">
+    <div class="time-tint" aria-hidden="true"></div>
+    <div class="night-lights" aria-hidden="true"></div>
+    <div class="weather-atmosphere" aria-hidden="true"></div>
+    <canvas class="weather-canvas" id="weatherCanvas" width="512" height="768" aria-hidden="true"></canvas>
+    <svg class="route-layer" id="routeLayer" viewBox="0 0 1024 1536" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <svg class="foreground-layer" viewBox="0 0 1024 1536" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <g id="maskGreenhouseGlass">
+          <path d="M190 190L275 190V350H190Z"/>
+        </g>
+        <g id="maskGreenhouse">
+          <path d="M189 363V210A53 53 0 0 1 295 210V363H276V213A34 34 0 0 0 208 213V363Z"/>
+          <path d="M275 194L337 218V360L275 347Z"/>
+        </g>
+        <g id="maskStarArch">
+          <path d="M475 268H515V148H475ZM684 264H725V133H684Z"/>
+        </g>
+        <g id="maskLeftGate">
+          <path d="M0 813V678A77 77 0 0 1 193 678V815H160V684A45 45 0 0 0 35 684V813Z"/>
+          <path d="M0 686C17 694 34 700 53 720L66 774L60 819H0Z"/>
+        </g>
+        <g id="maskLeftFoliage">
+          <path d="M282 769C290 748 303 748 313 778C337 816 342 860 351 912C358 946 369 1008 362 1060L338 1074L315 1060L290 1055L264 1070L238 1060C232 1010 248 975 253 938C256 892 262 840 270 803Z"/>
+        </g>
+        <g id="maskRightFoliage">
+          <path d="M832 739C842 731 855 761 862 790C875 841 887 891 878 916L856 928L830 914L819 900C820 851 827 783 832 739Z"/>
+          <path d="M639 1097L655 1095L661 1208L657 1294L641 1290Z"/>
+        </g>
+        <g id="maskFountainNWUrn">
+          <path d="M373 553C386 549 409 549 423 553L421 566C417 576 407 581 398 582L396 588C409 588 420 590 423 595L423 600L416 603L416 620L408 628L374 628L368 620L368 603L368 600L371 594L382 589L389 588L389 582C379 578 372 568 373 553Z"/>
+        </g>
+        <g id="maskFountainSWUrn">
+          <path d="M307 817C320 810 346 810 364 818L365 832C362 841 352 846 345 846L346 850L372 850L384 856L385 864L377 868L377 919L367 929L317 929L306 920L306 869L299 866L301 856L315 851L328 850L329 847C316 844 308 835 307 817Z"/>
+        </g>
+        <g id="maskFountainSEUrn">
+          <path d="M644 811C657 804 690 804 704 813L703 831C699 842 687 847 679 848L681 853L702 853L716 860L716 869L707 872L707 923L695 933L643 933L629 923L629 872L625 869L627 859L642 852L657 850L657 848C646 845 641 831 644 811Z"/>
+        </g>
+        <g id="maskRightGate">
+          <path d="M794 896L849 896V1072H794Z"/>
+          <path d="M851 909L925 861V1062L851 1056Z"/>
+          <path d="M982 1029V875H1024V1029Z"/>
+        </g>
+        <clipPath id="foregroundClip">
+          <use href="#maskGreenhouse"/><use href="#maskStarArch"/><use href="#maskLeftGate"/><use href="#maskLeftFoliage"/><use href="#maskRightFoliage"/><use href="#maskRightGate"/><use href="#maskFountainSWUrn"/><use href="#maskFountainSEUrn"/>
+        </clipPath>
+        <clipPath id="greenhouseGlassClip">
+          <use href="#maskGreenhouseGlass"/>
+        </clipPath>
+      </defs>
+      <image class="greenhouse-glass" href="assets/original-dark-romance-garden.webp" width="1024" height="1536" preserveAspectRatio="none" clip-path="url(#greenhouseGlassClip)"/>
+      <image href="assets/original-dark-romance-garden.webp" width="1024" height="1536" preserveAspectRatio="none" clip-path="url(#foregroundClip)"/>
+      <g class="mask-debug">
+        <use href="#maskGreenhouse"/><use href="#maskStarArch"/><use href="#maskLeftGate"/><use href="#maskLeftFoliage"/><use href="#maskRightFoliage"/><use href="#maskRightGate"/><use href="#maskFountainSWUrn"/><use href="#maskFountainSEUrn"/>
+      </g>
+      <use class="glass-debug" href="#maskGreenhouseGlass"/>
+    </svg>
+    <img class="foreground-image" src="assets/foreground.webp" alt="" aria-hidden="true">
+    <svg class="cottage-gate-foreground" viewBox="0 0 1024 1536" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <mask id="cottageGateSolid" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1536" style="mask-type:luminance">
+          <rect width="1024" height="1536" fill="black"/>
+          <!-- Stone posts are solid; the street behind the open ironwork is not. -->
+          <path d="M783 922L789 909L791 889L835 881L849 893L849 1061L839 1084L786 1084Z" fill="white"/>
+          <path d="M981 902L992 875L1013 871L1024 885V1040H990Z" fill="white"/>
+          <path d="M851 929Q875 905 904 886M853 1056L903 1040M861 923V1053M870 915V1050M879 907V1047M888 900V1044M897 893V1041" fill="none" stroke="white" stroke-width="4"/>
+          <path d="M853 970Q867 960 878 978Q884 989 876 998Q864 1007 858 992M879 973Q898 963 899 983Q900 996 889 1002M853 1022Q869 1015 879 1030M877 1013Q891 1004 904 1019" fill="none" stroke="white" stroke-width="3.5"/>
+        </mask>
+      </defs>
+      <image href="assets/original-dark-romance-garden.webp" width="1024" height="1536" preserveAspectRatio="none" mask="url(#cottageGateSolid)"/>
+    </svg>
+
+    <button class="hotspot greenhouse" data-target="greenInside" type="button" aria-label="Vào nhà kính chăm hoa" title="Nhà kính">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 24c-2-4-3-6-3-9a3 3 0 0 1 6 0c0 3-1 5-3 9Zm0 0v4M12 22c-5 0-8-3-7-6 2-3 5-1 7 2m8 4c5 0 8-3 7-6-2-3-5-1-7 2M9 12c0-5 4-7 7-4 3-3 7-1 7 4"/></svg>
+    </button>
+    <button class="hotspot fishing" data-target="fishDeck" type="button" aria-label="Đi tới bệ câu cá" title="Câu cá">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 17c5-7 12-8 19-2l4-4v10l-4-4c-7 6-14 5-19-2m11-2-2 7m-9 5c8-2 16-2 24 0"/><circle cx="19" cy="15" r="1" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button class="hotspot stars" data-target="starTerrace" type="button" aria-label="Đi tới sân ngắm sao" title="Ngắm sao">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 2.8 9.2L28 15l-9.2 2.8L16 27l-2.8-9.2L4 15l9.2-2.8L16 3Zm9 21 1 2.5 2.5 1-2.5 1L25 31l-1-2.5-2.5-1 2.5-1L25 24Z"/></svg>
+    </button>
+    <button class="hotspot meadow" data-target="westExit" type="button" aria-label="Đi qua vòm sang đồng cỏ pet" title="Đồng cỏ pet">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 21c1-3 3-5 7-5s6 2 7 5c1 3-1 5-4 4l-3-1-3 1c-3 1-5-1-4-4Z"/><ellipse cx="7" cy="13" rx="2" ry="3"/><ellipse cx="13" cy="9" rx="2" ry="3"/><ellipse cx="20" cy="9" rx="2" ry="3"/><ellipse cx="26" cy="13" rx="2" ry="3"/></svg>
+    </button>
+    <button class="hotspot cottage" data-target="rightExit" data-via="trunkC" type="button" aria-label="Đi theo lối tới cottage" title="Lối cottage">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m4 16 12-10 12 10M8 14v13h16V14M14 27v-8h5v8M11 12h2m9 0h-2"/></svg>
+    </button>
+
+    <div class="walker" id="walker" role="img" aria-label="Nhân vật trong vườn"><span class="actor-sprite" id="actorSprite"></span></div>
+
+    <div class="garden-hud" aria-label="Giờ và thời tiết trong vườn">
+      <div class="clock-group"><div class="clock-meta"><span class="garden-day" id="gardenDayChip">Ngày 1</span><button class="weather-now" id="weatherNow" type="button" aria-label="Xem thời tiết"><span id="weatherIcon" aria-hidden="true">☀</span><span id="weatherName">Nắng</span></button></div><div class="garden-clock" id="gardenClock" role="timer" aria-label="Đồng hồ trong vườn"><i class="hour-hand" id="hourHand"></i><i class="minute-hand" id="minuteHand"></i><i class="clock-pin"></i><span id="clockTime">--:--</span></div></div>
+    </div>
+    <div class="weather-choices" id="weatherChoices" hidden aria-label="Xem thử thời tiết và thời gian">
+      <div class="weather-panel-section">
+        <div class="weather-panel-title">Thời tiết</div>
+        <div class="weather-btn-group">
+          <button type="button" data-weather-choice="auto" aria-pressed="true" title="Tự động theo lịch vườn">Tự động</button>
+          <button type="button" data-weather-choice="sunny" title="Trời nắng, quang mây">☀ Nắng</button>
+          <button type="button" data-weather-choice="cloudy" title="Nhiều mây">☁ Mây</button>
+          <button type="button" data-weather-choice="windy" title="Gió thổi cánh hoa">❧ Gió</button>
+          <button type="button" data-weather-choice="rainy" title="Mưa rơi trên hồ">☂ Mưa</button>
+          <button type="button" data-weather-choice="snowy" title="Tuyết rơi nhẹ">❄ Tuyết</button>
+        </div>
+      </div>
+      <div class="weather-panel-section">
+        <div class="weather-panel-title">Thời gian (Xem thử)</div>
+        <div class="weather-btn-group time-btn-group">
+          <button type="button" data-time-choice="auto" aria-pressed="true" title="Theo giờ thực tế Việt Nam">Giờ VN</button>
+          <button type="button" data-time-choice="day" title="Xem thử ban ngày">☀ Ngày</button>
+          <button type="button" data-time-choice="night" title="Xem thử ban đêm">☾ Đêm</button>
+        </div>
+      </div>
+    </div>
+
+    <header class="toolbar">
+      <button id="debugToggle" type="button" aria-pressed="false">Hiện kỹ thuật</button>
+      <button id="resetPosition" type="button">Về cổng vào</button>
+    </header>
+
+    <div class="status" id="status" hidden aria-hidden="true"></div>
+    <div class="garden-quick-actions">
+      <button class="bag-toggle" id="bagToggle" type="button" aria-label="Mở túi đồ"><img src="assets/satchel.webp" alt=""></button>
+      <button class="shop-toggle" id="shopToggle" type="button" aria-label="Mở tiệm nhỏ"><img src="assets/shopfront.webp" alt=""><span>Tiệm nhỏ</span></button>
+    </div>
+    <div class="portrait-dock" id="portraitDock" hidden><button class="portrait-button" id="emotionToggle" type="button" aria-label="Chọn biểu cảm nhân vật" aria-expanded="false"><span class="dock-art" id="dockArt" aria-hidden="true"></span><span class="portrait-hint" aria-hidden="true">✧</span></button><div class="emotion-menu" id="emotionMenu" hidden><button type="button" data-expression="happy">✦ <span>Vui</span></button><button type="button" data-expression="shy">♡ <span>Ngại</span></button><button type="button" data-expression="sad">☁ <span>Buồn</span></button><button type="button" data-expression="annoyed">✕ <span>Giận</span></button></div></div>
+
+    <section class="onboard-veil" id="onboardVeil" aria-hidden="true">
+      <form class="onboard-card" id="onboardForm" aria-labelledby="onboardTitle">
+        <span class="onboard-kicker">✧ MỘT KHU VƯỜN ĐANG CHỜ ✧</span><h2 id="onboardTitle">Ai sẽ bước vào <em>khu vườn?</em></h2>
+        <div class="onboard-characters" role="radiogroup" aria-label="Chọn nhân vật">
+          <label class="onboard-choice"><input type="radio" name="avatarGender" value="female" checked><span class="onboard-sprite female"></span><strong>Nữ</strong></label>
+          <label class="onboard-choice"><input type="radio" name="avatarGender" value="male"><span class="onboard-sprite male"></span><strong>Nam</strong></label>
+        </div>
+        <label class="garden-name-label" for="gardenName">Tên khu vườn của bạn</label><input id="gardenName" name="gardenName" maxlength="32" placeholder="Ví dụ: Vườn Mộng Miên" autocomplete="off" required>
+        <p class="onboard-error" id="onboardError" aria-live="polite"></p><button class="onboard-start" type="submit">Bước vào khu vườn ✧</button>
+      </form>
+    </section>
+    <div class="welcome-dialogue" id="welcomeDialogue" role="dialog" aria-label="Lời chào trong vườn" hidden><div class="dialogue-character" id="dialogueCharacter" aria-hidden="true"></div><div class="dialogue-box"><span class="dialogue-speaker">✧ NGƯỜI GIỮ VƯỜN</span><p id="dialogueText" aria-live="polite"></p><button type="button" id="dialogueSkip" aria-label="Thu gọn lời chào">✦</button></div></div>
+
+    <section class="shop-veil" id="shopVeil" aria-hidden="true">
+      <div class="shop-sheet" role="dialog" aria-modal="true" aria-labelledby="shopTitle" tabindex="-1">
+        <button class="shop-close" id="shopClose" type="button" aria-label="Đóng tiệm">×</button>
+        <div class="shop-heading"><span class="shop-kicker">✧ TIỆM NHỎ TRONG VƯỜN ✧</span><h2 id="shopTitle">Đổi lấy <em>một chút phép màu.</em></h2><p>Cánh hoa đang có <strong id="shopBalance">0 ✿</strong></p></div>
+        <div class="shop-tabs" id="shopTabs" role="tablist" aria-label="Nhóm đồ trong tiệm"><button type="button" data-shop-tab="profile" role="tab" aria-selected="true">Nhân vật</button><button type="button" data-shop-tab="lake" role="tab" aria-selected="false">Hồ cá</button><button type="button" data-shop-tab="pet" role="tab" aria-selected="false">Pet</button><button type="button" data-shop-tab="frame" role="tab" aria-selected="false">Khung</button></div>
+        <div class="shop-list" id="shopList"></div>
+        <p class="shop-notice" id="shopNotice" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="bag-veil" id="bagVeil" aria-hidden="true">
+      <div class="bag-sheet" role="dialog" aria-modal="true" aria-labelledby="bagTitle" tabindex="-1">
+        <button class="bag-close" id="bagClose" type="button" aria-label="Đóng túi đồ">×</button>
+        <div class="bag-heading"><span>✧ NHỮNG THỨ EM MANG THEO ✧</span><h2 id="bagTitle">Túi đồ <em>trong vườn.</em></h2><p id="bagSummary"></p></div>
+        <div class="bag-list" id="bagList"></div>
+        <p class="bag-notice" id="bagNotice" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="bloom-veil" id="bloomVeil" aria-hidden="true">
+      <div class="bloom-sheet" role="dialog" aria-modal="true" aria-labelledby="bloomTitle" tabindex="-1">
+        <button class="bloom-close" id="bloomClose" type="button" aria-label="Đóng bảng chăm hoa">×</button>
+        <div class="bloom-portrait" aria-hidden="true">
+          <div class="bloom-rose" id="bloomRose"></div>
+          <span class="bloom-star s1">✧</span><span class="bloom-star s2">✦</span><span class="bloom-star s3">✧</span>
+          <span class="bloom-drop d1"></span><span class="bloom-drop d2"></span><span class="bloom-drop d3"></span>
+          <span class="bloom-petal p1"></span><span class="bloom-petal p2"></span><span class="bloom-petal p3"></span>
+          <span class="bloom-portrait-caption">MỘT BÔNG HỒNG CHO NGÀY HÔM NAY</span>
+        </div>
+        <div class="bloom-copy">
+          <div class="bloom-eyebrow"><span>✦</span> MỘT CHÚT DỊU DÀNG MỖI NGÀY <span>✦</span></div>
+          <h2 id="bloomTitle">Hôm nay <em>hoa đợi em.</em></h2>
+          <p class="bloom-description" id="bloomDescription">Hoa còn khép cánh, đợi em tưới một chút nước.</p>
+          <div class="bloom-rule"></div>
+          <div class="bloom-progress">
+            <div class="bloom-streak"><small>CHUỖI CHĂM HOA</small><strong><span id="bloomCount">0</span> <i>ngày</i></strong></div>
+            <div class="bloom-wallet"><small>CÁNH HOA ĐÃ CÓ</small><strong><span id="bloomPetals">0</span> <i>✿</i></strong></div>
+          </div>
+          <div class="bloom-days" id="bloomDays" aria-label="Tiến độ bảy ngày chăm hoa"></div>
+          <button class="bloom-water" id="bloomWater" type="button"><span class="bloom-water-icon" aria-hidden="true"><svg class="water-drop" viewBox="0 0 24 24"><path d="M12 3c-2.4 3.5-5.8 7.6-5.8 11a5.8 5.8 0 0 0 11.6 0C17.8 10.6 14.4 6.5 12 3Z"/><path d="M9 15a3 3 0 0 0 3 3"/></svg><svg class="water-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span id="bloomButtonText">Tưới hoa hôm nay</span><span class="bloom-water-reward">+10 ✿</span></button>
+          <p class="bloom-footnote" id="bloomNotice" aria-live="polite">Mỗi ngày tưới một lần · sang ngày mới hoa lại chờ bạn</p>
+        </div>
+      </div>
+    </section>
+    <section class="star-veil" id="starVeil" aria-hidden="true">
+      <div class="star-sheet" role="dialog" aria-modal="true" aria-labelledby="starTitle" tabindex="-1">
+        <button class="star-close" id="starClose" type="button" aria-label="Đóng bảng ngắm sao">×</button>
+        <div class="star-scene" id="starScene" aria-hidden="true">
+          <div class="star-dust" id="starDust"></div>
+          <svg class="star-figure" id="starFigure" viewBox="0 0 320 245" preserveAspectRatio="xMidYMid meet"></svg>
+          <span class="star-scene-caption">MỘT KHOẢNG TRỜI RIÊNG CHO ĐÊM NAY</span>
+        </div>
+        <div class="star-copy">
+          <span class="star-eyebrow">✧ &nbsp; MƯỜI HAI CHÒM SAO &nbsp; ✧</span>
+          <h2 id="starTitle">Đêm nay <em>trời đợi em.</em></h2>
+          <p class="star-description" id="starDescription">Chạm để xem bầu trời giữ lại điều gì cho em.</p>
+          <div class="star-divider"><span>✦</span></div>
+          <p class="star-found" id="starFound" aria-live="polite"></p>
+          <button class="star-watch" id="starWatch" type="button"><span class="star-watch-icon" aria-hidden="true">✦</span><span id="starButtonText">Ngắm sao đêm nay</span><span class="star-reward">+5 ✿</span></button>
+          <p class="star-footnote" id="starFootnote" aria-live="polite">Ngắm sao nhận 5 cánh hoa ✿</p>
+          <p class="star-total">EM ĐÃ GIỮ <span id="starTotal">0</span> NGÔI SAO ✧</p>
+        </div>
+      </div>
+    </section>
+    <section class="activity-veil" id="fishVeil" aria-hidden="true">
+      <div class="activity-sheet fish-sheet" role="dialog" aria-modal="true" aria-labelledby="fishTitle" tabindex="-1">
+        <button class="activity-close" data-close="fishVeil" type="button" aria-label="Đóng bảng câu cá">×</button>
+        <div class="activity-art fish-art" aria-hidden="true"><span class="fish-rod"></span><span class="fish-line"></span><span class="fish-float"></span><span class="fish-ripple"></span><span class="fish-catch-visual" id="fishCatchVisual"></span><span class="activity-art-caption">MẶT HỒ VẪN ĐỢI EM</span></div>
+        <div class="activity-copy">
+          <div class="activity-kicker">✧ &nbsp; MỘT CHIỀU BÊN HỒ &nbsp; ✧</div>
+          <h2 id="fishTitle">Thử <em>thả câu nhé.</em></h2>
+          <p class="activity-description" id="fishMessage" aria-live="polite">Mỗi lần thả câu có thể gặp một loài cá khác nhau.</p>
+          <p class="fish-remaining" id="fishRemaining">Hôm nay còn 5/5 lượt câu</p>
+          <button class="activity-primary" id="fishCast" type="button"><span>Thả câu</span><small>↝</small></button>
+          <div class="weed-row"><span><i class="weed-mini" aria-hidden="true"></i>Rong trong giỏ: <b id="fishSeaweed">0</b></span><button id="fishSell" type="button">Bán rong · +2 ✿/nhúm</button></div>
+          <div class="activity-rule"></div>
+          <p class="inventory-heading">CÁ TRONG GIỎ <span id="fishCount">0</span></p>
+          <div class="fish-inventory" id="fishInventory"></div>
+          <p class="activity-footnote">Giữ cá để cho pet ăn, hoặc bán từng con lấy hoa.</p>
+        </div>
+      </div>
+    </section>
+    <section class="activity-veil" id="petVeil" aria-hidden="true">
+      <div class="activity-sheet pet-sheet" role="dialog" aria-modal="true" aria-labelledby="petTitle" tabindex="-1">
+        <button class="activity-close" data-close="petVeil" type="button" aria-label="Đóng khu thú cưng">×</button>
+        <div class="activity-art pet-art" aria-hidden="true"></div>
+        <div class="activity-copy">
+          <div class="activity-kicker">✧ &nbsp; ĐỒNG CỎ TRONG VƯỜN &nbsp; ✧</div>
+          <h2 id="petTitle">Gặp <em>những bé mèo.</em></h2>
+          <p class="activity-description">Chăm hoa, ngắm sao và câu cá để dành hoa đón các bé về cottage.</p>
+          <p class="pet-balance">Cánh hoa em có <strong id="petPetals">0</strong> ✿</p>
+          <div class="pet-grid" id="petGrid"></div>
+          <p class="activity-footnote" id="petNotice" aria-live="polite">Chạm vào một bé để xem hồ sơ và nhận nuôi.</p>
+        </div>
+        <div class="pet-detail" id="petDetail" role="dialog" aria-modal="true" aria-label="Hồ sơ bé mèo" hidden></div>
+      </div>
+    </section>
+    <section class="activity-veil" id="cottageVeil" aria-hidden="true">
+      <div class="activity-sheet cottage-sheet" role="dialog" aria-modal="true" aria-labelledby="cottageTitle" tabindex="-1">
+        <button class="activity-close" data-close="cottageVeil" type="button" aria-label="Đóng cottage">×</button>
+        <div class="activity-art cottage-art" id="cottageArt">
+          <div class="cottage-residents" id="cottageResidents"></div>
+          <button class="cottage-hotspot spot-food" type="button" data-station="feed" aria-label="Bát ăn"></button>
+          <button class="cottage-hotspot spot-water" type="button" data-station="water" aria-label="Bát nước"></button>
+          <button class="cottage-hotspot spot-play" type="button" data-station="play" aria-label="Đồ chơi"></button>
+          <button class="cottage-hotspot spot-sleep" type="button" data-station="sleep" aria-label="Giường ngủ"></button>
+          <div class="cottage-pet" id="cottagePet" hidden></div>
+        </div>
+        <div class="activity-copy">
+          <div class="activity-kicker">✧ &nbsp; COTTAGE &nbsp; ✧</div>
+          <h2 id="cottageTitle">Về <em>nhà thôi.</em></h2>
+          <p class="activity-description" id="cottageMessage" aria-live="polite">Trong nhà có chỗ nghỉ, nước sạch và một chiếc giỏ ấm.</p>
+          <button class="cottage-manage" id="cottageManage" type="button" aria-expanded="false">Bày trong nhà · 1/5 ✧</button>
+          <div class="cottage-roster" id="cottageRoster" hidden></div>
+          <div class="cottage-actions" id="cottageActions" hidden><div class="pet-selector" id="petSelector"></div><div class="care-grid" id="careGrid"></div><button class="cottage-back" id="cottageBack" type="button">← Trở lại căn phòng</button></div>
+          <button class="activity-primary cottage-find" id="cottageFind" type="button">Ra đồng cỏ gặp pet <small>↝</small></button>
+          <p class="activity-footnote" id="cottageNotice" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+    <div class="stage-extension stage-extension-bottom" aria-hidden="true"></div>
+  </div>
+  <script src="game.js"></script>
+  <script>
+    (() => {
+      const veil = document.getElementById('petVeil');
+      if (!veil || document.getElementById('pet-modal-viewport-fix-style')) return;
+
+      document.body.appendChild(veil);
+
+      const style = document.createElement('style');
+      style.id = 'pet-modal-viewport-fix-style';
+      style.textContent = `
+    #petVeil.activity-veil {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 1000 !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100dvh;
+      padding: max(12px, env(safe-area-inset-top, 0px))
+               max(12px, env(safe-area-inset-right, 0px))
+               max(12px, env(safe-area-inset-bottom, 0px))
+               max(12px, env(safe-area-inset-left, 0px));
+      overflow: hidden !important;
+      box-sizing: border-box;
+    }
+
+    #petVeil .pet-sheet.activity-sheet {
+      position: relative;
+      display: grid;
+      grid-template-rows: clamp(155px, 29dvh, 245px) minmax(0, 1fr);
+      width: min(100%, 460px);
+      height: min(760px, calc(100dvh - 24px));
+      max-height: 100%;
+      min-height: 0;
+      overflow: hidden !important;
+      box-sizing: border-box;
+    }
+
+    #petVeil .pet-sheet > .pet-art {
+      grid-row: 1;
+      position: relative !important;
+      top: auto !important;
+      z-index: 1;
+      width: 100%;
+      height: 100% !important;
+      min-height: 0;
+      margin: 0;
+      flex: none;
+      background-color: #171923;
+    }
+
+    #petVeil .pet-sheet > .activity-copy {
+      grid-row: 2;
+      position: relative;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      max-height: none !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding-top: 19px;
+      padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+      box-sizing: border-box;
+    }
+
+    #petVeil .pet-sheet > .activity-close { z-index: 12; }
+
+    #petVeil .pet-detail:not([hidden]) {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 20;
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      margin: 0;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+      box-sizing: border-box;
+    }
+
+    #petVeil .pet-detail[hidden] { display: none !important; }
+
+    @media (max-height: 640px) {
+      #petVeil .pet-sheet.activity-sheet {
+        grid-template-rows: clamp(120px, 24dvh, 160px) minmax(0, 1fr);
+      }
+    }
+  `;
+      document.head.appendChild(style);
+    })();
+  </script>
+</body>
+</html>

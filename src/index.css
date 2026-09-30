@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Garden Serif";
+  src: url('/garden/assets/garden-serif-regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Garden Serif";
+  src: url('/garden/assets/garden-serif-italic.otf') format('opentype');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Garden Serif";
+  src: url('/garden/assets/garden-serif-bold.otf') format('opentype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-garden: "Garden Serif", Georgia, Cambria, serif;
+
+  --color-brand-pink: #d4d4d8;
+  --color-brand-border: rgba(255, 255, 255, 0.1);
+  --color-brand-text: #e4e4e7;
+  --color-brand-bg: #09090b;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes sparkleFall {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(112vh);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sparkleDrift {
+  0% {
+    transform: translateX(-18px) rotate(-15deg) scale(0.9);
+  }
+  50% {
+    transform: translateX(18px) rotate(15deg) scale(1.1);
+  }
+  100% {
+    transform: translateX(-18px) rotate(-15deg) scale(0.9);
+  }
+}
+
+body {
+  @apply font-sans bg-[var(--color-brand-bg)] text-[var(--color-brand-text)];
+  min-height: 100vh;
+  background-image: url('https://i.pinimg.com/736x/bf/ec/55/bfec5504601f8fe1d7643b257edb6a22.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Glassmorphism utilities */
+.neon-title {
+  color: #ffffff;
+  animation: neonGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 4px rgba(255, 255, 255, 0.9),
+      0 0 10px rgba(240, 220, 255, 0.6),
+      0 0 20px rgba(192, 132, 252, 0.35);
+  }
+  50% {
+    text-shadow: 
+      0 0 6px rgba(255, 255, 255, 1),
+      0 0 14px rgba(244, 208, 254, 0.75),
+      0 0 26px rgba(168, 85, 247, 0.45);
+  }
+}
+
+.glass {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.serif-title {
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
+}
+
+.glass-panel {
+  @apply bg-black/50 backdrop-blur-xl border border-[var(--color-brand-border)] shadow-md;
+}
+
+.glass-input {
+  @apply bg-black/60 backdrop-blur-sm border border-[var(--color-brand-border)] outline-none focus:ring-1 focus:ring-zinc-400 transition-all text-gray-200 placeholder-zinc-500;
+}
+
+.glass-button {
+  @apply bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 shadow-sm transition-all active:scale-95 text-gray-200;
+}
+
+/* Custom scrollbar for webkit */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* Hide scrollbar for select elements */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@keyframes neonTwinkle {
+  0%, 100% {
+    text-shadow: 
+      0 0 4px rgba(251, 191, 36, 0.9),
+      0 0 10px rgba(244, 114, 182, 0.8),
+      0 0 16px rgba(251, 191, 36, 0.6);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.5));
+  }
+  50% {
+    text-shadow: 
+      0 0 8px rgba(255, 255, 255, 1),
+      0 0 16px rgba(244, 114, 182, 1),
+      0 0 24px rgba(251, 191, 36, 0.9);
+    filter: drop-shadow(0 0 12px rgba(244, 114, 182, 0.8));
+  }
+}
+
+.neon-twinkle-admin {
+  animation: neonTwinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes botNameShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.bot-title-effect {
+  font-family: var(--font-serif);
+  background: linear-gradient(90deg, #d4d4d8 0%, #ffffff 25%, #f4f4f5 50%, #ffffff 75%, #a1a1aa 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: botNameShimmer 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 18px rgba(228, 228, 231, 0.25));
+  letter-spacing: 0.05em;
+}
+
+

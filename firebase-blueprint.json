@@ -1,0 +1,167 @@
+{
+  "entities": {
+    "BotStats": {
+      "title": "Bot Stats",
+      "description": "Real-time statistics for a bot",
+      "type": "object",
+      "properties": {
+        "chatCount": { "type": "number", "description": "Total messages sent to this bot" },
+        "likesCount": { "type": "number", "description": "Total likes for this bot" }
+      },
+      "required": ["chatCount", "likesCount"]
+    },
+    "UserData": {
+      "title": "User Data",
+      "description": "User specific data including personas, chats, and settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "personas": { "type": "array" },
+        "activePersonaId": { "type": "string" },
+        "chats": { "type": "object" },
+        "activeSessionIds": { "type": "object" },
+        "likedBots": { "type": "array" },
+        "apiKey": { "type": "string" },
+        "model": { "type": "string" },
+        "temperature": { "type": "number" },
+        "customApiUrl": { "type": "string" },
+        "provider": { "type": "string" },
+        "affectionLevels": { "type": "object" },
+        "isOnboarded": { "type": "boolean" },
+        "updatedAt": { "type": "number", "description": "Timestamp of last update" }
+      },
+      "required": ["userId"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Anonymous feedback from users",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string", "description": "The feedback text" },
+        "createdAt": { "type": "number", "description": "Timestamp when feedback was submitted" },
+        "status": { "type": "string", "description": "Status of the feedback (unread, read)" }
+      },
+      "required": ["content", "createdAt"]
+    },
+    "BotComment": {
+      "title": "Bot Comment",
+      "description": "Anonymous comments and replies for a bot",
+      "type": "object",
+      "properties": {
+        "botId": { "type": "string", "description": "ID of the target bot" },
+        "parentId": { "type": "string", "description": "ID of parent comment if this is a reply" },
+        "replyToNickname": { "type": "string", "description": "Nickname of user being replied to" },
+        "nickname": { "type": "string", "description": "Nickname of the commenter (defaults to 'vợ iu bí mật')" },
+        "content": { "type": "string", "description": "Comment content text" },
+        "images": { "type": "array", "description": "Array of compressed image data strings (up to 3)" },
+        "likes": { "type": "number", "description": "Number of hearts/likes" },
+        "likedBy": { "type": "array", "description": "User identifiers who liked this comment" },
+        "createdAt": { "type": "number", "description": "Timestamp of creation" }
+      },
+      "required": ["botId", "content", "createdAt"]
+    },
+    "ForumPost": {
+      "title": "Forum Post",
+      "description": "Posts in forum tám zai",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Post title" },
+        "content": { "type": "string", "description": "Post body text" },
+        "nickname": { "type": "string", "description": "Poster nickname" },
+        "category": { "type": "string", "description": "Post topic or category" },
+        "images": { "type": "array", "description": "Up to 3 compressed images" },
+        "linkUrl": { "type": "string", "description": "Optional attached URL link" },
+        "linkTitle": { "type": "string", "description": "Display title for the attached link" },
+        "reactions": { "type": "object", "description": "Reaction counts" },
+        "userReactions": { "type": "object", "description": "Map of userId to reaction" },
+        "createdAt": { "type": "number", "description": "Timestamp of creation" },
+        "isPinned": { "type": "boolean", "description": "Whether the post is pinned by admin" },
+        "isNsfw": { "type": "boolean", "description": "Whether image content is NSFW and should be blurred" },
+        "isSpoiler": { "type": "boolean", "description": "Whether content contains spoilers and should be obscured" }
+      },
+      "required": ["content", "createdAt"]
+    },
+    "ForumComment": {
+      "title": "Forum Comment",
+      "description": "Comments under forum posts",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string", "description": "Target post ID" },
+        "parentId": { "type": "string", "description": "Parent comment ID for replies" },
+        "nickname": { "type": "string", "description": "Commenter nickname" },
+        "content": { "type": "string", "description": "Comment body" },
+        "images": { "type": "array", "description": "Up to 3 images" },
+        "likes": { "type": "number", "description": "Like count" },
+        "likedBy": { "type": "array", "description": "User IDs who liked" },
+        "createdAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["postId", "content", "createdAt"]
+    },
+    "UserAccount": {
+      "title": "User Account",
+      "description": "Registered user accounts for the website and garden",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "Unique username" },
+        "password": { "type": "string", "description": "Account password" },
+        "nickname": { "type": "string", "description": "Display nickname" },
+        "avatarUrl": { "type": "string", "description": "Avatar image or GIF data URL" },
+        "frameId": { "type": "string", "description": "Avatar frame decoration ID" },
+        "isAdmin": { "type": "boolean", "description": "Whether account has admin privileges" },
+        "createdAt": { "type": "number", "description": "Account creation timestamp" },
+        "updatedAt": { "type": "number", "description": "Last update timestamp" }
+      },
+      "required": ["username", "nickname", "createdAt"]
+    },
+    "GardenRecord": {
+      "title": "Garden Record",
+      "description": "Cloud synchronized progress for MeiMei Garden and daily streak",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "Username of the garden owner" },
+        "flowerData": { "type": "object", "description": "Daily rose watering, streak, and petals" },
+        "playerData": { "type": "object", "description": "Character gender and garden name" },
+        "starData": { "type": "object", "description": "Star-gazing collection" },
+        "shopData": { "type": "object", "description": "Purchased shop items and equipped accessories" },
+        "fishData": { "type": "object", "description": "Caught fish collection" },
+        "petData": { "type": "object", "description": "Adopted pets" },
+        "updatedAt": { "type": "number", "description": "Last synchronization timestamp" }
+      },
+      "required": ["username", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/bot_stats/{botId}": {
+      "schema": "BotStats",
+      "description": "Real-time stats for a specific bot"
+    },
+    "/users/{userId}": {
+      "schema": "UserData",
+      "description": "Data for a specific user"
+    },
+    "/feedbacks/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Anonymous feedbacks collection"
+    },
+    "/bot_comments/{commentId}": {
+      "schema": "BotComment",
+      "description": "Anonymous comments collection for bots"
+    },
+    "/forum_posts/{postId}": {
+      "schema": "ForumPost",
+      "description": "Posts in forum tám zai"
+    },
+    "/forum_comments/{commentId}": {
+      "schema": "ForumComment",
+      "description": "Comments in forum tám zai"
+    },
+    "/user_accounts/{username}": {
+      "schema": "UserAccount",
+      "description": "Registered user accounts"
+    },
+    "/garden_records/{username}": {
+      "schema": "GardenRecord",
+      "description": "Garden progress and daily streaks"
+    }
+  }
+}
